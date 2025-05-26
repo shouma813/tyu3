@@ -1,45 +1,52 @@
-#include <Windows.h>
-#include"KamataEngine.h"
+// #include <Windows.h>
+#pragma once
+#include "KamataEngine.h"
+using namespace KamataEngine;
 #include "GameScene.h"
 
-using namespace KamataEngine;
+// ゲームシーン
+class Gamescene {};
+
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
-	//ゲームシーンのインスタント生成
-	GameScene* gamScene = new GameScene();
-	// ゲームシーンの初期化
-	gamScene->Initiailize();
-	//エンジンの初期化
+
+	// エンジンの初期化
 	KamataEngine::Initialize(L"GC2D_07_ミヤガワ_ショウマ_AL3");
+
+	// DirectXcommonインスタンスの取得
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
-	//メインループ
+
+	// ゲームシーンのインスタンス生成
+	GameScene* gameScene = new GameScene();
+
+	// ゲームシーンの初期化
+	gameScene->Initialize();
+
+
+	// メインループ
 	while (true) {
-	   //エンジンの更新
+		// エンジンの更新
 		if (KamataEngine::Update()) {
-		   break;
+			break;
 		}
 
+		// ゲームシーンの更新
+		gameScene->Update();
 
-		//ゲームシーンの更新
-		gamScene->Update();
-
-
-	    //描画開始
+		// 描画開始
 		dxCommon->PreDraw();
 
+		// ゲームシーンの描画
+		gameScene->Draw();
 
-		//ゲームシーンの描画
-		gamScene->Update();
-
-
-		//描画終了
+		// 描画終了
 		dxCommon->PostDraw();
 	}
-	//ゲームシーンの解放
-	delete gamScene;
-	//nullptrの代入
-	gamScene = nullptr;
-	//エンジンの終了処理
+	// ゲームシーンの解放
+	delete gameScene;
+	// nullptrの代入
+	gameScene = nullptr;
+	// エンジンの終了処理
 	KamataEngine::Finalize();
 	return 0;
 }

@@ -1,18 +1,24 @@
 #pragma once
-#include"KamataEngine.h"
+#include "KamataEngine.h"
+#include "Player.h"
+#include <vector>
+#include "Skydome.h"
 
-//ゲームシーン
 class GameScene {
-
 public:
-
-//初期化
-	void Initiailize();
-
-	//更新
+	void Initialize();
 	void Update();
-
-	//描画
 	void Draw();
+	bool isDebugCameraActive_ = false;
+	KamataEngine::Model* modelSkydome_ = nullptr;
 
+private:
+	uint32_t textureHandle_ = 0;
+	KamataEngine::Model* model_ = nullptr;
+	KamataEngine::Model* modelBlock_ = nullptr;
+	KamataEngine::Camera camera_;
+	Player* player_ = nullptr;
+	std::vector<std::vector<KamataEngine::WorldTransform*>> worldTransformBlocks_;
+	KamataEngine::DebugCamera* debugCamera_ = nullptr;
+	Skydome* skydome_ = nullptr;
 };
