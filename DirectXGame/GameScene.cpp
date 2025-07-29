@@ -16,7 +16,7 @@ void GameScene::Initialize() {
 	skydome_ = new Skydome();
 	skydome_->Intialize(modelSkydome_, textureHandle_, &camera_);
 	player_ = new Player();
-	player_->Initialize(model_, textureHandle_, &camera_);
+	player_->Initialize(model_,  &camera_ , {0,0,0});
 
 
 
