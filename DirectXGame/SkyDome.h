@@ -1,6 +1,6 @@
 #pragma once
 #include "KamataEngine.h"
-#include "Player.h"
+//#include "Player.h"
 
 class Skydome {
 public:
