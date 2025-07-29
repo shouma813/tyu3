@@ -13,7 +13,7 @@ void Player::Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera
 
     worldTransform_.Initialize();
     worldTransform_.translation_ = position;
-    worldTransform_.rotation_.y = std::numbers::pi_v<float> / 2.0f;
+    worldTransform_.rotation_.y = std::numbers::pi_v<float> / 2.0f; // 初期右向き
     worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.rotation_,
         worldTransform_.scale_, worldTransform_.translation_);
 
@@ -91,16 +91,25 @@ void Player::Update() {
         onGround_ = true;
     }
 
-    // 回転処理（向き変更）
-    if (turnTimer_ > 0) {
-        float t = 1.0f - static_cast<float>(turnTimer_) / static_cast<float>(kTimeTurn);
+// 回転処理（向き変更）
+    if (turnTimer_ > 0.0f) {
+        turnTimer_ -= 1.0f / 60.0f; 
+        float t = 1.0f - std::clamp(turnTimer_ / kTimeTurn, 0.0f, 1.0f);
+
+        // 左右どちらに向くか
+        float targetY = (lrDirection_ == LrDirection::kRight) ? std::numbers::pi_v<float> / 2.0f : -std::numbers::pi_v<float> / 2.0f;
+
+        // 補間で滑らかに回転
+        worldTransform_.rotation_.y = std::lerp(turnFirstRotationY_, targetY, t);
+    }
+    else {
+        // 回転が完了したあと角度を確定
         if (lrDirection_ == LrDirection::kRight) {
-            worldTransform_.rotation_.y = Lerp(turnFirstRotationY_, std::numbers::pi_v<float> / 2.0f, t);
+            worldTransform_.rotation_.y = std::numbers::pi_v<float> / 2.0f;
         }
         else {
-            worldTransform_.rotation_.y = Lerp(turnFirstRotationY_, -std::numbers::pi_v<float> / 2.0f, t);
+            worldTransform_.rotation_.y = -std::numbers::pi_v<float> / 2.0f;
         }
-        turnTimer_--;
     }
 
     // 行列更新
