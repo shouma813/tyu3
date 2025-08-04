@@ -26,7 +26,7 @@ public:
 	static inline const float kVelocityBias = 30;
 	static inline const Rect targetMargin = { -9.0f, 9.0f, -5.0f, 5.0f };
 
-	
+
 private:
 	KamataEngine::Camera camera_;
 
