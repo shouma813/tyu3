@@ -16,7 +16,7 @@ void Player::Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera
 	worldTransform_.rotation_.y = std::numbers::pi_v<float> / 2.0f;
 	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
-	// プレイヤーは初期位置で地面にいる状態からスタート
+	// プレイヤーは初期位置で//
 	onGround_ = true;
 
 	// 移動速度の初期化
