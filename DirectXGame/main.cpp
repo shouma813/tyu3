@@ -11,7 +11,7 @@ class Gamescene {};
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	// エンジンの初期化
-	KamataEngine::Initialize(L"GC2D_04_オガワ_タクマ_AL3");
+	KamataEngine::Initialize(L"GC2D_07_ミヤガワ_AL3");
 
 	// DirectXcommonインスタンスの取得
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
