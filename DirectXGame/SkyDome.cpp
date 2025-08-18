@@ -1,6 +1,6 @@
 #include "skydome.h"
 
-void skydome::Initialize(KamataEngine::Model* model, uint32_t textureHandle, KamataEngine::Camera* camera) {
+void Skydome::Initialize(KamataEngine::Model* model, uint32_t textureHandle, KamataEngine::Camera* camera) {
 	assert(model);
 	model_ = model;
 	textureHandle_ = textureHandle;
@@ -8,6 +8,7 @@ void skydome::Initialize(KamataEngine::Model* model, uint32_t textureHandle, Kam
 	camera_ = camera;
 }
 
-void skydome::Update() {}
+void Skydome::Update() {}
 
-void skydome::Draw() { model_->Draw(worldTransform_, *camera_); }
+void Skydome::Draw() { model_->Draw(worldTransform_, *camera_); }
+

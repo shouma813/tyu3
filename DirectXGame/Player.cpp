@@ -5,6 +5,7 @@
 #define NOMINMAX
 #include "MapChipField.h"
 #include "algorithm"
+#include "MyMath.cpp"
 
 using namespace KamataEngine;
 
@@ -63,7 +64,7 @@ void Player::Update() {
 	//
 	AnimateTurn();
 
-	worldTransform_.matWorld_ = MakeaffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
 	worldTransform_.TransferMatrix();
 }

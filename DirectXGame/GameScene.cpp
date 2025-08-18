@@ -1,12 +1,14 @@
 #include "GameScene.h"
 #include "MyMath.h"
+#include "MyMath.cpp"
 
 using namespace KamataEngine;
-
+using namespace MathUtility;
 // デストラクタ
 GameScene::~GameScene() {
 	delete model_;
 	delete player_;
+	delete modelEnemy_;
 	delete modelSkydome_;
 	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockline : worldTransformBlocks_) {
 		for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlockline) {
@@ -30,6 +32,8 @@ void GameScene::Initialize() {
 
 	debugCamera_ = new DebugCamera(1280, 720);
 
+	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
+
 	mapChipField_ = new MapChipField;
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
 
@@ -41,19 +45,28 @@ void GameScene::Initialize() {
 	// 自キャラにの生成
 	player_ = new Player();
 
+	// 　敵キャラの生成
+	enemy_ = new Enemy();
+
 	mapChipField_ = new MapChipField;
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
 	GenerateBlocks();
 	player_->SetMapChipField(mapChipField_);
 
-	skydome_ = new skydome();
+	skydome_ = new Skydome();
 
 	cameraController_ = new CameraController();
 
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
 
+	Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(20, 18);
+
 	// 自キャラの初期化
 	player_->Initialize(modelPlayer_, &camera_, playerPosition);
+
+	// 敵キャラの初期化
+	enemy_->Initialize(modelEnemy_, &camera_, enemyPosition);
+
 	// 背景
 	skydome_->Initialize(modelSkydome_, textureHandle_, &camera_);
 
@@ -71,12 +84,14 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	// 自キャラの更新
 	player_->Update();
+
+	enemy_->Update();
 	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 			if (!worldTransformBlock) {
 				continue;
 			}
-			worldTransformBlock->matWorld_ = MakeaffineMatrix(worldTransformBlock->scale_, worldTransformBlock->rotation_, worldTransformBlock->translation_);
+			worldTransformBlock->matWorld_ = MakeAffineMatrix(worldTransformBlock->scale_, worldTransformBlock->rotation_, worldTransformBlock->translation_);
 
 			worldTransformBlock->TransferMatrix();
 		}
@@ -122,8 +137,10 @@ void GameScene::Draw() {
 	}
 	// 自キャラの描画
 	player_->Draw();
-
+	// 背景の描画
 	skydome_->Draw();
+	// 敵の描画
+	enemy_->Draw();
 
 	// スプライト描画後処理
 	Model::PostDraw();
