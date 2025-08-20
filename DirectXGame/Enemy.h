@@ -1,5 +1,5 @@
+#pragma once
 #include "KamataEngine.h"
-
 class Enemy {
 
 public:

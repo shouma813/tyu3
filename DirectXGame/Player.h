@@ -67,8 +67,9 @@ private:
 		bool ceiling = false;
 		bool landing = false;
 		bool hitWall = false;
-		KamataEngine::Vector3 move;
+		KamataEngine::Vector3 move = { 0.0f, 0.0f, 0.0f }; 
 	};
+
 
 	void InputMove();
 

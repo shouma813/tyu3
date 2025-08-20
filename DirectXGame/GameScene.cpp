@@ -1,6 +1,6 @@
 #include "GameScene.h"
 #include "MyMath.h"
-#include "MyMath.cpp"
+
 
 using namespace KamataEngine;
 using namespace MathUtility;
