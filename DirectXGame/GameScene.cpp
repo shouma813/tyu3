@@ -1,10 +1,9 @@
 #include "GameScene.h"
 #include "MyMath.h"
 
-
 using namespace KamataEngine;
-using namespace MathUtility;
-// デストラクタ
+
+// デストラクタ(解放)
 GameScene::~GameScene() {
 	delete model_;
 	delete player_;
@@ -18,6 +17,9 @@ GameScene::~GameScene() {
 	worldTransformBlocks_.clear();
 	delete debugCamera_;
 	delete mapChipField_;
+	for (Enemy* enemy : enemies_) {
+		delete enemy;
+	}
 }
 
 // 初期化処理
@@ -46,7 +48,14 @@ void GameScene::Initialize() {
 	player_ = new Player();
 
 	// 　敵キャラの生成
-	enemy_ = new Enemy();
+	/*enemy_ = new Enemy();*/
+	for (int32_t i = 0; i < 2; i++) {
+		Enemy* newEnemy = new Enemy();
+		KamataEngine::Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(6 + i, 18);
+		newEnemy->Initialize(modelEnemy_, &camera_, enemyPosition);
+
+		enemies_.push_back(newEnemy);
+	}
 
 	mapChipField_ = new MapChipField;
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
@@ -65,7 +74,7 @@ void GameScene::Initialize() {
 	player_->Initialize(modelPlayer_, &camera_, playerPosition);
 
 	// 敵キャラの初期化
-	enemy_->Initialize(modelEnemy_, &camera_, enemyPosition);
+	/*enemy_->Initialize(modelEnemy_,&camera_,enemyPosition);*/
 
 	// 背景
 	skydome_->Initialize(modelSkydome_, textureHandle_, &camera_);
@@ -85,13 +94,17 @@ void GameScene::Update() {
 	// 自キャラの更新
 	player_->Update();
 
-	enemy_->Update();
+	/*enemy_->Update();*/
+
+	// すべての当たり判定を行う
+	CheckAllCollisions();
+
 	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 			if (!worldTransformBlock) {
 				continue;
 			}
-			worldTransformBlock->matWorld_ = MakeAffineMatrix(worldTransformBlock->scale_, worldTransformBlock->rotation_, worldTransformBlock->translation_);
+			worldTransformBlock->matWorld_ = MakeaffineMatrix(worldTransformBlock->scale_, worldTransformBlock->rotation_, worldTransformBlock->translation_);
 
 			worldTransformBlock->TransferMatrix();
 		}
@@ -115,6 +128,10 @@ void GameScene::Update() {
 		camera_.TransferMatrix();
 	}
 	cameraController_->Update();
+
+	for (Enemy* enemy : enemies_) {
+		enemy->Update();
+	}
 }
 
 // 描画処理
@@ -140,7 +157,11 @@ void GameScene::Draw() {
 	// 背景の描画
 	skydome_->Draw();
 	// 敵の描画
-	enemy_->Draw();
+	/*enemy_->Draw();*/
+
+	for (Enemy* enemy : enemies_) {
+		enemy->Draw();
+	}
 
 	// スプライト描画後処理
 	Model::PostDraw();
@@ -167,6 +188,25 @@ void GameScene::GenerateBlocks() {
 				worldTransformBlocks_[i][j] = worldTransform;
 				worldTransform->translation_ = mapChipField_->GetMapChipPositionByIndex(j, i);
 			}
+		}
+	}
+}
+
+void GameScene::CheckAllCollisions() {
+	// 判定対象1と2の座標
+	AABB aabb1, aabb2;
+	// 自キャラの座標
+	aabb1 = player_->GetAABB();
+	// 自キャラと敵弾全ての当たり判定
+	for (Enemy* enemy : enemies_) {
+		// 敵弾の座標
+		aabb2 = enemy->GetAABB();
+
+		// AABB同士の交差判定
+		if (IsCollision(aabb1, aabb2)) {
+			player_->OnCollision(enemy);
+			// ジャンプ開始(仮処理)
+			enemy->OnCollision(player_);
 		}
 	}
 }
