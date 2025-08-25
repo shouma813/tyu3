@@ -1,7 +1,7 @@
 #include "KamataEngine.h"
 
 #pragma once
-class Skydome {
+class skydome {
 
 public:
 	void Initialize(KamataEngine::Model* model, uint32_t textureHandle, KamataEngine::Camera* camera);
